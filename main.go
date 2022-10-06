@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -20,7 +21,13 @@ const (
 	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 )
 
-var src = rand.NewSource(time.Now().UnixNano())
+var (
+	src = rand.NewSource(time.Now().UnixNano())
+	version = "unknown"
+	commit = "unknown"
+	date = "unknown"
+)
+
 var verbose bool
 var db *sqlx.DB
 
@@ -34,13 +41,19 @@ func initTable() {
 func main() {
 	var records int64
 	var recordLength int
-	var doInit bool
+	var doInit, showVersion bool
 
 	flag.BoolVar(&verbose, "verbose", false, "enable verbose output")
 	flag.BoolVar(&doInit, "init", false, "drop and create test table")
+	flag.BoolVar(&showVersion, "version", false, "show version")
 	flag.Int64Var(&records, "records", 1000, "number of records generate")
 	flag.IntVar(&recordLength, "length", 512, "record length")
 	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("version: %s\ncommit: %s\ndate: %s\n", version, commit, date)
+		os.Exit(0)
+	}
 
 	var err error
 
