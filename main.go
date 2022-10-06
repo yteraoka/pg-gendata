@@ -3,21 +3,21 @@ package main
 import (
 	"flag"
 	"log"
-	"os"
 	"math/rand"
+	"os"
 	"strings"
 	"time"
 
-	_ "github.com/lib/pq"
-	"github.com/jmoiron/sqlx"
 	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const (
-    letterIdxBits = 6                    // 6 bits to represent a letter index
-    letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
-    letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+	letterIdxBits = 6                    // 6 bits to represent a letter index
+	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 )
 
 var src = rand.NewSource(time.Now().UnixNano())
@@ -58,11 +58,10 @@ func main() {
 		initTable()
 	}
 
-
 	var i int64
 	var tx *sqlx.Tx
 	for i = 0; i < records; i++ {
-		if i % 1000 == 0 {
+		if i%1000 == 0 {
 			log.Printf("BEGIN (%d)\n", i)
 			tx, err = db.Beginx()
 			if err != nil {
@@ -70,13 +69,13 @@ func main() {
 			}
 		}
 		_, err = tx.Exec("INSERT INTO testdata (id, data) VALUES ($1, $2)",
-					uuid.NewString(), randStringBytes(recordLength))
+			uuid.NewString(), randStringBytes(recordLength))
 		if err != nil {
 			log.Println(err)
 			tx.Rollback()
 			return
 		}
-		if i % 1000 == 999 || i == records -1 {
+		if i%1000 == 999 || i == records-1 {
 			log.Printf("COMMIT (%d)\n", i)
 			err = tx.Commit()
 			if err != nil {
