@@ -85,7 +85,7 @@ func main() {
 			uuid.NewString(), randStringBytes(recordLength))
 		if err != nil {
 			log.Println(err)
-			tx.Rollback()
+			tx.Rollback() //nolint:errcheck
 			return
 		}
 		if i%1000 == 999 || i == records-1 {
@@ -93,7 +93,7 @@ func main() {
 			err = tx.Commit()
 			if err != nil {
 				log.Println(err)
-				tx.Rollback()
+				tx.Rollback() //nolint:errcheck
 				return
 			}
 		}
